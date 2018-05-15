@@ -17,6 +17,8 @@ export default () => {
     actions: {
       nuxtServerInit({commit, dispatch}, {req, env}) {
         commit('setAny', {env})
+        console.log('session init ?')
+        dispatch('session/init', {user: req.user, baseUrl: env.publicUrl + '/api/session'})
       }
     }
   })

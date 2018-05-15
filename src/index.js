@@ -6,7 +6,9 @@ export const sessionStore = {
   state: {
     user: null,
     baseUrl: null,
-    logoutRedirectUrl: null
+    logoutRedirectUrl: null,
+    cookieName: 'id_token',
+    interval: 60000
   },
   mutations: {
     setAny(state, params) {
@@ -22,17 +24,17 @@ export const sessionStore = {
       commit('setAny', {user: null})
       if (state.logoutRedirectUrl) window.location.href = state.logoutRedirectUrl
     },
-    init({commit}, {baseUrl, logoutRedirectUrl, cookieName, interval}) {
-      cookieName = cookieName || 'id_token'
-      interval = interval !== undefined ? interval : 60000
-      commit('setAny', {baseUrl, logoutRedirectUrl})
-      function readCookie() {
-        const cookie = cookies.get(cookieName)
-        if (cookie) commit('setAny', {user: jwtDecode(cookie)})
-        else commit('setAny', {user: null})
-      }
-      readCookie()
-      if (interval > 0) setInterval(readCookie, interval)
+    init({commit}, params) {
+      console.log('ok', params)
+      commit('setAny', params)
+    },
+    readCookie({state, commit}) {
+      const cookie = cookies.get(state.cookieName)
+      if (cookie) commit('setAny', {user: jwtDecode(cookie)})
+      else commit('setAny', {user: null})
+    },
+    loop({state, dispatch}) {
+      setInterval(() => dispatch('readCookie'), state.interval)
     }
   }
 }
