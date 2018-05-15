@@ -5,7 +5,8 @@ module.exports = {
   dev: process.env.NODE_ENV === 'development',
   srcDir: 'public/',
   plugins: [
-    {src: '~plugins/vuetify'}
+    {src: '~plugins/vuetify'},
+    {src: '~plugins/session', ssr: false}
   ],
   router: {
     base: new URL(config.publicUrl + '/').pathname

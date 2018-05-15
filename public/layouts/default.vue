@@ -32,8 +32,8 @@
 const {mapState, mapActions} = require('vuex')
 
 export default {
-  computed: mapState(['user']),
-  methods: mapActions(['logout', 'login'])
+  computed: mapState('session', ['user']),
+  methods: mapActions('session', ['logout', 'login'])
 }
 
 </script>
