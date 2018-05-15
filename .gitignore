@@ -1,10 +1,4 @@
 /node_modules
-/.nyc_output
-/coverage
-/.nuxt
-/doc-dist
-/public/pages/doc
-/security
 /dist
 /demo/.nuxt
 /demo/node_modules
