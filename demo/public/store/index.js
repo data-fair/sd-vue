@@ -1,12 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import session from '../../../src/session.js'
-
+import {sessionStore} from 'simple-directory-client-nuxt'
 Vue.use(Vuex)
 
 export default () => {
   return new Vuex.Store({
-    modules: {session},
+    modules: {session: sessionStore},
     state: {
       env: {}
     },

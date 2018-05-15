@@ -29,7 +29,7 @@
     "express": "^4.16.2",
     "nuxt": "^1.4.0",
     "simple-directory-client-express": "^0.4.2",
-    "simple-directory-client-nuxt": "^0.2.0",
+    "simple-directory-client-nuxt": "^0.2.4",
     "vuetify": "^1.0.6"
   }
 }
