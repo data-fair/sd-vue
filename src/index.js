@@ -25,7 +25,6 @@ export const sessionStore = {
       if (state.logoutRedirectUrl) window.location.href = state.logoutRedirectUrl
     },
     init({commit}, params) {
-      console.log('ok', params)
       commit('setAny', params)
     },
     readCookie({state, commit}) {
