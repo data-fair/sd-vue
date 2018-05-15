@@ -5,3 +5,6 @@
 /doc-dist
 /public/pages/doc
 /security
+/dist
+/demo/.nuxt
+/demo/node_modules

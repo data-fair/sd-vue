@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import session from './session'
+import session from '../../../src/session.js'
 
 Vue.use(Vuex)
 
