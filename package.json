@@ -1,6 +1,6 @@
 {
   "name": "simple-directory-client-nuxt",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple recipe project to show integration of authentication/session based on simple-directory in a nuxt project.",
   "main": "public/store/session.js",
   "scripts": {
