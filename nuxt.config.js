@@ -14,7 +14,7 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
   axios: {
     browserBaseURL: config.publicUrl + '/',
-    baseURL: `http://localhost:${config.port}/`
+    baseURL: `http://localhost:8080/`
   },
   head: {
     title: 'Simple Directory - Nuxt recipe',
