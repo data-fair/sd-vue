@@ -24,13 +24,26 @@ export const sessionStore = {
       commit('setAny', {user: null})
       if (state.logoutRedirectUrl) window.location.href = state.logoutRedirectUrl
     },
+    switchOrganization({state, commit, dispatch}, organizationId) {
+      if (organizationId) cookies.set(`${state.cookieName}_org`, organizationId)
+      else cookies.remove(`${state.cookieName}_org`)
+      dispatch('readCookie')
+    },
     init({commit}, params) {
       commit('setAny', params)
     },
     readCookie({state, commit}) {
       const cookie = cookies.get(state.cookieName)
-      if (cookie) commit('setAny', {user: jwtDecode(cookie)})
-      else commit('setAny', {user: null})
+      if (cookie) {
+        const user = jwtDecode(cookie)
+        const organizationId = cookies.get(`${state.cookieName}_org`)
+        if (user && organizationId) {
+          user.organization = (user.organizations || []).find(o => o.id === organizationId)
+        }
+        commit('setAny', {user})
+      } else {
+        commit('setAny', {user: null})
+      }
     },
     loop({state, dispatch}) {
       setInterval(() => dispatch('readCookie'), state.interval)

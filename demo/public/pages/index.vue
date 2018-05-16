@@ -5,6 +5,10 @@
 
       <span class="subheading">Use a simple directory for authentication and session in a nuxt project (vuejs + webpack + ssr).</span>
 
+      <div v-if="user">
+        <pre>{{ JSON.stringify(user, null, 2) }}</pre>
+      </div>
+
       <div><v-btn color="primary" @click="getProtectedResource">Access protected resource</v-btn></div>
 
       <span v-if="protectedResource">{{ protectedResource }}</span>
@@ -13,8 +17,12 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
   data: () => ({protectedResource: null}),
+  computed: {
+    ...mapState('session', ['user'])
+  },
   methods: {
     async getProtectedResource() {
       try {
