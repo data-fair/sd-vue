@@ -36,10 +36,24 @@ export const sessionStore = {
       const cookie = cookies.get(state.cookieName)
       if (cookie) {
         const user = jwtDecode(cookie)
-        const organizationId = cookies.get(`${state.cookieName}_org`)
-        if (user && organizationId) {
-          user.organization = (user.organizations || []).find(o => o.id === organizationId)
+        if (user) {
+          const organizationId = cookies.get(`${state.cookieName}_org`)
+          if (organizationId) {
+            user.organization = (user.organizations || []).find(o => o.id === organizationId)
+
+            // consumerFlag is used by applications to decide if they should ask confirmation to the user
+            // of the right quotas or other organization related context to apply
+            // it is 'user' if id_token_org is an empty string or is equal to 'user'
+            // it is null if id_token_org is absent or if it does not match an organization of the current user
+            // it is the id of the orga in id_token_org
+            if (user.organization) {
+              user.consumerFlag = user.organization.id
+            } else if (organizationId.toLowerCase() === 'user') {
+              user.consumerFlag = 'user'
+            }
+          }
         }
+
         commit('setAny', {user})
       } else {
         commit('setAny', {user: null})
