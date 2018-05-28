@@ -10,23 +10,27 @@ export const sessionStore = {
     cookieName: 'id_token',
     interval: 60000
   },
+  getters: {
+    loginUrl(state) {
+      return redirect => {
+        // Login can also be used to redirect user immediately if he is already logged
+        // shorter then "logIfNecessaryOrRedirect"
+        if (redirect && state.user) return redirect
+        redirect = redirect && typeof redirect === 'string' ? redirect : `${window.location.origin}${window.location.pathname}`
+        if (redirect.indexOf('?') === -1) redirect += '?id_token='
+        else redirect += '&id_token='
+        return `${state.baseUrl}/login?redirect=${encodeURIComponent(redirect)}`
+      }
+    }
+  },
   mutations: {
     setAny(state, params) {
       Object.assign(state, params)
     }
   },
   actions: {
-    login({state}, {redirect} = {}) {
-      // Login can also be used to redirect user immediately if he is already logged
-      // shorter then "logIfNecessaryOrRedirect"
-      if (redirect && state.user) {
-        window.location.href = redirect
-        return
-      }
-      redirect = redirect || `${window.location.origin}${window.location.pathname}`
-      if (redirect.indexOf('?') === -1) redirect += '?id_token='
-      else redirect += '&id_token='
-      window.location.href = `${state.baseUrl}/login?redirect=${encodeURIComponent(redirect)}`
+    login({getters}, redirect) {
+      window.location.href = getters.loginUrl(redirect)
     },
     async logout({commit, state}) {
       await this.$axios.post(`${state.baseUrl}/logout`)
