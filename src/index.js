@@ -16,12 +16,17 @@ export const sessionStore = {
     }
   },
   actions: {
-    login({state}, {redirect}) {
+    login({state}, {redirect} = {}) {
       // Login can also be used to redirect user immediately if he is already logged
       // shorter then "logIfNecessaryOrRedirect"
-      if (redirect && state.user) window.location.href = redirect
+      if (redirect && state.user) {
+        window.location.href = redirect
+        return
+      }
       redirect = redirect || `${window.location.origin}${window.location.pathname}`
-      window.location.href = `${state.baseUrl}/login?redirect=${redirect}?id_token=`
+      if (redirect.indexOf('?') === -1) redirect += '?id_token='
+      else redirect += '&id_token='
+      window.location.href = `${state.baseUrl}/login?redirect=${encodeURIComponent(redirect)}`
     },
     async logout({commit, state}) {
       await this.$axios.post(`${state.baseUrl}/logout`)
