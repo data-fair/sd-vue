@@ -5,16 +5,18 @@
 
       <v-spacer/>
 
-      <v-btn v-if="!user" color="primary" @click="login">login</v-btn>
-      <v-menu v-else offset-y>
-        <v-btn slot="activator" flat>{{ user.name }}</v-btn>
-        <v-list>
-          <select-consumer/>
-          <v-list-tile @click="logout">
-            <v-list-tile-title>Logout</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
+      <template v-if="session.initialized">
+        <v-btn v-if="!session.user" color="primary" @click="login">login</v-btn>
+        <v-menu v-else offset-y>
+          <v-btn slot="activator" flat>{{ session.user.name }}</v-btn>
+          <v-list>
+            <select-consumer/>
+            <v-list-tile @click="logout">
+              <v-list-tile-title>Logout</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </template>
     </v-toolbar>
 
     <v-content>
@@ -31,11 +33,15 @@
 
 <script>
 import selectConsumer from '../components/select-consumer'
-const {mapState, mapActions} = require('vuex')
+const {mapActions} = require('vuex')
 
 export default {
   components: {selectConsumer},
-  computed: mapState('session', ['user']),
+  computed: {
+    session() {
+      return this.$store.state.session
+    }
+  },
   methods: mapActions('session', ['logout', 'login'])
 }
 

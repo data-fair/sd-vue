@@ -5,16 +5,17 @@ export const sessionStore = {
   namespaced: true,
   state: {
     user: null,
+    initialized: false,
     baseUrl: null,
     logoutRedirectUrl: null,
     cookieName: 'id_token',
-    interval: 60000
+    interval: 10000
   },
   getters: {
     loginUrl(state) {
       return redirect => {
         // Login can also be used to redirect user immediately if he is already logged
-        // shorter then "logIfNecessaryOrRedirect"
+        // shorter than "logIfNecessaryOrRedirect"
         if (redirect && state.user) return redirect
         redirect = redirect && typeof redirect === 'string' ? redirect : `${window.location.origin}${window.location.pathname}`
         if (redirect.indexOf('?') === -1) redirect += '?id_token='
@@ -25,6 +26,10 @@ export const sessionStore = {
   },
   mutations: {
     setAny(state, params) {
+      // Replace undefined with null to prevent breaking reactivity
+      Object.keys(params).forEach(k => {
+        if (params[k] === undefined) params[k] = null
+      })
       Object.assign(state, params)
     }
   },
@@ -43,6 +48,8 @@ export const sessionStore = {
       dispatch('readCookie')
     },
     init({commit}, params) {
+      // user can be read from server in req.user, or later on in cookies when loop is used.
+      if (params.user) params.initialized = true
       commit('setAny', params)
     },
     readCookie({state, commit}) {
@@ -66,13 +73,13 @@ export const sessionStore = {
             }
           }
         }
-
-        commit('setAny', {user})
+        commit('setAny', {user, initialized: true})
       } else {
-        commit('setAny', {user: null})
+        commit('setAny', {user: null, initialized: true})
       }
     },
     loop({state, dispatch}) {
+      setTimeout(() => dispatch('readCookie'), 0)
       setInterval(() => dispatch('readCookie'), state.interval)
     }
   }
