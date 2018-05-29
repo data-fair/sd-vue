@@ -1,6 +1,6 @@
 {
   "name": "simple-directory-client-nuxt",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Tools to manage a session from simple-directory in a nuxt project. Also a recipe/demo in ./demo/",
   "main": "dist/index.js",
   "scripts": {
