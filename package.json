@@ -21,5 +21,15 @@
   "dependencies": {
     "js-cookie": "^2.2.0",
     "jwt-decode": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.2",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "webpack": "^4.12.2",
+    "webpack-cli": "^3.0.8"
   }
 }
