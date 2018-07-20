@@ -1,4 +1,4 @@
-const { Nuxt, Builder } = require('nuxt-edge')
+const { Nuxt, Builder } = require('nuxt')
 
 const nuxtConfig = require('../nuxt.config.js')
 

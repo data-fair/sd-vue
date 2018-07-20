@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "eslint --ext js,vue --ignore-path .gitignore .",
-    "build": "webpack && cp dist/index.js demo/node_modules/simple-directory-client-nuxt/dist/index.js",
+    "build": "webpack --mode production",
+    "build-dev": "webpack --mode development && cp dist/index.js demo/node_modules/simple-directory-client-nuxt/dist/index.js",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -23,6 +24,10 @@
     "jwt-decode": "^2.2.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.54",
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
+    "babel-loader": "^8.0.0-beta",
     "eslint": "^4.18.2",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.9.0",

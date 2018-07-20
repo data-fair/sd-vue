@@ -6,6 +6,7 @@ Use as a module
 
 Execute the demo/recipe project to show integration of authentication/session based on simple-directory in a nuxt project.
 
+    npm run build-dev
     cd demo
     npm i
     npm run dev

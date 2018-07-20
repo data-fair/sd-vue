@@ -6,7 +6,10 @@
       <v-spacer/>
 
       <template v-if="session.initialized">
-        <v-btn v-if="!session.user" color="primary" @click="login">login</v-btn>
+        <template v-if="!session.user">
+          <v-btn color="primary" @click="login">login button</v-btn>
+          <a :href="loginUrl()">login link</a>
+        </template>
         <v-menu v-else offset-y>
           <v-btn slot="activator" flat>{{ session.user.name }}</v-btn>
           <v-list>
@@ -33,11 +36,12 @@
 
 <script>
 import selectConsumer from '../components/select-consumer'
-const {mapActions} = require('vuex')
+const {mapActions, mapGetters} = require('vuex')
 
 export default {
   components: {selectConsumer},
   computed: {
+    ...mapGetters('session', ['loginUrl']),
     session() {
       return this.$store.state.session
     }

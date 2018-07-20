@@ -38,8 +38,9 @@ export const sessionStore = {
     login({getters}, redirect) {
       window.location.href = getters.loginUrl(redirect)
     },
-    async logout({commit, state}) {
-      if (state.httpLib) await state.httpLib.post(`${state.baseUrl}/logout`)
+    logout({commit, state}) {
+      const httpLib = state.httpLib || this.$axios
+      if (httpLib) httpLib.post(`${state.baseUrl}/logout`)
       else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
       commit('setAny', {user: null})
       if (state.logoutRedirectUrl) window.location.href = state.logoutRedirectUrl
@@ -50,9 +51,6 @@ export const sessionStore = {
       dispatch('readCookie')
     },
     init({commit}, params) {
-      // user can be read from server in req.user, or later on in cookies when loop is used.
-      if (params.user) params.initialized = true
-      params.httpLib = params.httpLib || this.$axios
       commit('setAny', params)
     },
     readCookie({state, commit}) {
