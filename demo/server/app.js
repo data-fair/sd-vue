@@ -2,7 +2,7 @@ const config = require('../config')
 const express = require('express')
 const http = require('http')
 const eventToPromise = require('event-to-promise')
-const session = require('simple-directory-client-express')(config)
+const session = require('@koumoul/sd-express')(config)
 
 const app = express()
 const server = http.createServer(app)

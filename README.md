@@ -1,12 +1,15 @@
-# simple-directory-client-nuxt
+# Simple Directory - Vue/Nuxt
 
 Use as a module
 
-    npm i simple-directory-client-nuxt
+    npm i @koumoul/sd-vue
 
 Execute the demo/recipe project to show integration of authentication/session based on simple-directory in a nuxt project.
 
-    npm run build-dev
     cd demo
     npm i
     npm run dev
+
+When developing you can build sd-vue then update the version in the demo using this command:
+
+    npm run build dev

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {sessionStore} from 'simple-directory-client-nuxt'
+import {sessionStore} from '@koumoul/sd-vue'
 Vue.use(Vuex)
 
 export default () => {
