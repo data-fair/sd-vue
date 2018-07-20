@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext js,vue --ignore-path .gitignore .",
     "build": "webpack --mode production",
-    "build-dev": "webpack --mode development && cp dist/index.js demo/node_modules/sd-vue/dist/index.js",
+    "build-dev": "webpack --mode development && cp dist/index.js demo/node_modules/@koumoul/sd-vue/dist/index.js",
     "prepublish": "npm run build"
   },
   "repository": {
