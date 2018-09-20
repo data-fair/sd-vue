@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/albanm/sd-vue.git"
+    "url": "git+https://github.com/koumoul-dev/sd-vue.git"
   },
   "author": "Alban Mouton <alban.mouton@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/albanm/sd-vue/issues"
+    "url": "https://github.com/koumoul-dev/sd-vue/issues"
   },
-  "homepage": "https://github.com/albanm/sd-vue#readme",
+  "homepage": "https://github.com/koumoul-dev/sd-vue#readme",
   "dependencies": {
     "js-cookie": "^2.2.0",
     "jwt-decode": "^2.2.0"

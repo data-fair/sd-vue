@@ -10,6 +10,7 @@ export const sessionStore = {
     logoutRedirectUrl: null,
     cookieName: 'id_token',
     interval: 10000,
+    autoKeepalive: 300000, // 5 minutes by default
     httpLib: null
   },
   getters: {
@@ -50,6 +51,12 @@ export const sessionStore = {
       else cookies.remove(`${state.cookieName}_org`)
       dispatch('readCookie')
     },
+    keepalive({state, dispatch}) {
+      const httpLib = state.httpLib || this.$axios
+      if (httpLib) httpLib.post(`${state.baseUrl}/logout`)
+      else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
+      dispatch('readCookie')
+    },
     init({commit}, params) {
       commit('setAny', params)
     },
@@ -82,6 +89,10 @@ export const sessionStore = {
     loop({state, dispatch}) {
       setTimeout(() => dispatch('readCookie'), 0)
       setInterval(() => dispatch('readCookie'), state.interval)
+      if (state.autoKeepalive) {
+        dispatch('keepalive')
+        setInterval(() => dispatch('keepalive'), state.autoKeepalive)
+      }
     }
   }
 }
