@@ -1,6 +1,6 @@
 {
   "name": "@koumoul/sd-vue",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Tools to manage a session from simple-directory in a vuejs project. Also a recipe/demo in ./demo/",
   "main": "dist/index.js",
   "scripts": {
