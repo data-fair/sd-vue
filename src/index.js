@@ -52,6 +52,7 @@ export const sessionStore = {
       dispatch('readCookie')
     },
     keepalive({state, dispatch}) {
+      if (!state.user) return
       const httpLib = state.httpLib || this.$axios
       if (httpLib) httpLib.post(`${state.baseUrl}/logout`)
       else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
@@ -87,12 +88,14 @@ export const sessionStore = {
       }
     },
     loop({state, dispatch}) {
-      setTimeout(() => dispatch('readCookie'), 0)
-      setInterval(() => dispatch('readCookie'), state.interval)
-      if (state.autoKeepalive) {
-        dispatch('keepalive')
-        setInterval(() => dispatch('keepalive'), state.autoKeepalive)
-      }
+      setTimeout(() => {
+        dispatch('readCookie')
+        setInterval(() => dispatch('readCookie'), state.interval)
+        if (state.autoKeepalive) {
+          dispatch('keepalive')
+          setInterval(() => dispatch('keepalive'), state.autoKeepalive)
+        }
+      }, 0)
     }
   }
 }
