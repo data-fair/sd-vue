@@ -41,10 +41,17 @@ export const sessionStore = {
     },
     logout({commit, state}) {
       const httpLib = state.httpLib || this.$axios
-      if (httpLib) httpLib.post(`${state.baseUrl}/logout`)
-      else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
-      commit('setAny', {user: null})
-      if (state.logoutRedirectUrl) window.location.href = state.logoutRedirectUrl
+      if (!httpLib) {
+        console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
+        return
+      }
+      return httpLib.post(`${state.baseUrl}/logout`).then(() => {
+        if (state.logoutRedirectUrl) {
+          window.location.href = state.logoutRedirectUrl
+          return
+        }
+        commit('setAny', {user: null})
+      })
     },
     switchOrganization({state, commit, dispatch}, organizationId) {
       if (organizationId) cookies.set(`${state.cookieName}_org`, organizationId)
