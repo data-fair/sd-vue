@@ -1,7 +1,7 @@
 import cookies from 'js-cookie'
 import jwtDecode from 'jwt-decode'
 
-export const sessionStore = {
+export const sessionStoreBuilder = () => ({
   namespaced: true,
   state: {
     user: null,
@@ -105,4 +105,6 @@ export const sessionStore = {
       }, 0)
     }
   }
-}
+})
+
+export const sessionStore = sessionStoreBuilder()
