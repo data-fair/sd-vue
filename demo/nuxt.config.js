@@ -4,26 +4,16 @@ const URL = require('url').URL
 module.exports = {
   dev: process.env.NODE_ENV === 'development',
   srcDir: 'public/',
-  build: {
-    extractCSS: true,
-    vendor: ['babel-polyfill'],
-    // Use babel polyfill, not runtime transform to support Array.includes and other methods
-    // cf https://github.com/nuxt/nuxt.js/issues/93
-    babel: {
-      presets: [
-        ['vue-app', {useBuiltIns: true, targets: { ie: 11, uglify: true }}]
-      ]
-    }
-  },
+  build: {},
   plugins: [
-    {src: '~plugins/vuetify'},
-    {src: '~plugins/session', ssr: false}
+    { src: '~plugins/vuetify' },
+    { src: '~plugins/session-loop', ssr: false }
   ],
   router: {
     base: new URL(config.publicUrl + '/').pathname
   },
   env: config,
-  modules: ['@nuxtjs/axios'],
+  modules: ['@nuxtjs/axios', 'cookie-universal-nuxt'],
   axios: {
     browserBaseURL: config.publicUrl + '/',
     baseURL: `http://localhost:8080/`

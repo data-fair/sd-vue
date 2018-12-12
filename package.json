@@ -20,21 +20,20 @@
   },
   "homepage": "https://github.com/koumoul-dev/sd-vue#readme",
   "dependencies": {
-    "js-cookie": "^2.2.0",
     "jwt-decode": "^2.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.54",
-    "@babel/core": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
-    "babel-loader": "^8.0.0-beta",
-    "eslint": "^4.18.2",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "webpack": "^4.12.2",
-    "webpack-cli": "^3.0.8"
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "babel-loader": "^8.0.4",
+    "eslint": "^5.10.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
   }
 }

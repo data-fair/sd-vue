@@ -12,4 +12,4 @@ Execute the demo/recipe project to show integration of authentication/session ba
 
 When developing you can build sd-vue then update the version in the demo using this command:
 
-    npm run build dev
+    npm run build-dev

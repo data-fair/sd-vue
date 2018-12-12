@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {sessionStore} from '@koumoul/sd-vue'
+import { sessionStoreBuilder } from '@koumoul/sd-vue'
 Vue.use(Vuex)
 
 export default () => {
   return new Vuex.Store({
-    modules: {session: sessionStore},
+    modules: { session: sessionStoreBuilder() },
     state: {
-      env: {}
+      env: {},
+      protectedResource: null
     },
     mutations: {
       setAny(state, params) {
@@ -15,9 +16,19 @@ export default () => {
       }
     },
     actions: {
-      nuxtServerInit({commit, dispatch}, {req, env}) {
-        commit('setAny', {env})
-        dispatch('session/init', {user: req.user, baseUrl: env.publicUrl + '/api/session'})
+      nuxtServerInit({ commit, dispatch }, { req, env }) {
+        commit('setAny', { env })
+        dispatch('session/init', { cookies: this.$cookies, baseUrl: env.publicUrl + '/api/session' })
+      },
+      async getProtectedResource({ commit }) {
+        let protectedResource
+        try {
+          protectedResource = await this.$axios.$get('api/protected')
+        } catch (err) {
+          protectedResource = err.response.data
+        }
+        commit('setAny', { protectedResource })
+        return protectedResource
       }
     }
   })

@@ -17,20 +17,26 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 export default {
-  data: () => ({protectedResource: null}),
   computed: {
+    ...mapState(['protectedResource']),
     ...mapState('session', ['user'])
   },
-  methods: {
-    async getProtectedResource() {
-      try {
-        this.protectedResource = await this.$axios.$get('api/protected')
-      } catch (err) {
-        this.protectedResource = err.response.data
-      }
+  created() {
+    // this.user is available both in the browser and when doing SSR rendering
+    console.log('User when rendering page (both browser and SSR): ', this.user && this.user.email)
+  },
+  async fetch({ store }) {
+    const user = store.state.session.user
+    console.log('User when fetching data during SSR: ', user && user.email)
+    if (user) {
+      console.log('Fetch protected resource during SSR')
+      console.log(await store.dispatch('getProtectedResource'))
     }
+  },
+  methods: {
+    ...mapActions(['getProtectedResource'])
   }
 }
 </script>

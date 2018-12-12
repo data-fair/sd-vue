@@ -8,7 +8,6 @@
       <template v-if="session.initialized">
         <template v-if="!session.user">
           <v-btn color="primary" @click="login">login button</v-btn>
-          <a :href="loginUrl()">login link</a>
         </template>
         <v-menu v-else offset-y>
           <v-btn slot="activator" flat>{{ session.user.name }}</v-btn>

@@ -1,5 +1,20 @@
-import cookies from 'js-cookie'
 import jwtDecode from 'jwt-decode'
+
+function jwtDecodeAlive (jwt) {
+  if (!jwt) return null
+  const decoded = jwtDecode(jwt)
+  if (!decoded) return null
+  const now = Date.now().valueOf() / 1000
+  if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
+    console.error(`token expired: ${JSON.stringify(decoded)}`)
+    return null
+  }
+  if (typeof decoded.nbf !== 'undefined' && decoded.nbf > now) {
+    console.error(`token expired: ${JSON.stringify(decoded)}`)
+    return null
+  }
+  return decoded
+}
 
 export const sessionStoreBuilder = () => ({
   namespaced: true,
@@ -36,10 +51,10 @@ export const sessionStoreBuilder = () => ({
     }
   },
   actions: {
-    login({getters}, redirect) {
+    login({ getters }, redirect) {
       window.location.href = getters.loginUrl(redirect)
     },
-    logout({commit, state}) {
+    logout({ commit, state }) {
       const httpLib = state.httpLib || this.$axios
       if (!httpLib) {
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
@@ -50,30 +65,36 @@ export const sessionStoreBuilder = () => ({
           window.location.href = state.logoutRedirectUrl
           return
         }
-        commit('setAny', {user: null})
+        commit('setAny', { user: null })
       })
     },
-    switchOrganization({state, commit, dispatch}, organizationId) {
-      if (organizationId) cookies.set(`${state.cookieName}_org`, organizationId)
-      else cookies.remove(`${state.cookieName}_org`)
+    switchOrganization({ state, commit, dispatch }, organizationId) {
+      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId)
+      else this.cookies.remove(`${state.cookieName}_org`)
       dispatch('readCookie')
     },
-    keepalive({state, dispatch}) {
+    keepalive({ state, dispatch }) {
       if (!state.user) return
       const httpLib = state.httpLib || this.$axios
       if (httpLib) httpLib.post(`${state.baseUrl}/keepalive`)
       else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
       dispatch('readCookie')
     },
-    init({commit}, params) {
+    init({ commit, dispatch }, params) {
+      if (!params.cookies) {
+        throw new Error('You must init @koumoul/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
+      }
+      this.cookies = params.cookies
+      delete params.cookies
       commit('setAny', params)
+      dispatch('readCookie')
     },
-    readCookie({state, commit}) {
-      const cookie = cookies.get(state.cookieName)
+    readCookie({ state, commit }) {
+      const cookie = this.cookies.get(state.cookieName)
       if (cookie) {
-        const user = jwtDecode(cookie)
+        const user = jwtDecodeAlive(cookie)
         if (user) {
-          const organizationId = cookies.get(`${state.cookieName}_org`)
+          const organizationId = this.cookies.get(`${state.cookieName}_org`)
           if (organizationId) {
             user.organization = (user.organizations || []).find(o => o.id === organizationId)
 
@@ -89,12 +110,17 @@ export const sessionStoreBuilder = () => ({
             }
           }
         }
-        commit('setAny', {user, initialized: true})
+        commit('setAny', { user, initialized: true })
       } else {
-        commit('setAny', {user: null, initialized: true})
+        commit('setAny', { user: null, initialized: true })
       }
     },
-    loop({state, dispatch}) {
+    loop({ state, dispatch }, cookies) {
+      if (!this.cookies && !cookies) {
+        throw new Error('You must init @koumoul/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
+      }
+      this.cookies = this.cookies || cookies
+
       setTimeout(() => {
         dispatch('readCookie')
         setInterval(() => dispatch('readCookie'), state.interval)

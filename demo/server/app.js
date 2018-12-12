@@ -20,8 +20,6 @@ exports.run = async() => {
   const nuxt = await require('./nuxt')()
   // Pages can be used as callback urls for the login
   app.use(session.loginCallback)
-  // Define req.user without crypto check, just as info
-  app.use(session.decode)
   app.use(nuxt)
   server.listen(8080)
   await eventToPromise(server, 'listening')
