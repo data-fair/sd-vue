@@ -48,6 +48,10 @@ export const sessionStoreBuilder = () => ({
         if (params[k] === undefined) params[k] = null
       })
       Object.assign(state, params)
+    },
+    updateUser(state, user) {
+      if (state.user && state.user.id === user.id) Object.assign(state.user, user)
+      else state.user = user
     }
   },
   actions: {
@@ -112,10 +116,11 @@ export const sessionStoreBuilder = () => ({
             }
           }
         }
-        commit('setAny', { user, initialized: true })
+        commit('updateUser', user)
       } else {
-        commit('setAny', { user: null, initialized: true })
+        commit('setAny', { user: null })
       }
+      commit('setAny', { initialized: true })
     },
     loop({ state, dispatch }, cookies) {
       if (!this.cookies && !cookies) {
