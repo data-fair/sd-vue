@@ -76,9 +76,11 @@ export const sessionStoreBuilder = () => ({
     keepalive({ state, dispatch }) {
       if (!state.user) return
       const httpLib = state.httpLib || this.$axios
-      if (httpLib) httpLib.post(`${state.baseUrl}/keepalive`)
-      else console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
-      dispatch('readCookie')
+      if (httpLib) {
+        httpLib.post(`${state.baseUrl}/keepalive`).then(() => {
+          dispatch('readCookie')
+        })
+      } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
     },
     init({ commit, dispatch }, params) {
       if (!params.cookies) {
