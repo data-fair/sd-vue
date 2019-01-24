@@ -114,6 +114,8 @@ export const sessionStoreBuilder = () => ({
             } else if (organizationId.toLowerCase() === 'user') {
               user.consumerFlag = 'user'
             }
+          } else {
+            user.organization = null
           }
         }
         commit('updateUser', user)
