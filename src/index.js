@@ -123,7 +123,7 @@ export const sessionStoreBuilder = () => ({
             user.organization = null
           }
 
-          if (user.isAdmin && this.cookies.get(`${state.cookieName}_admin`) === 'true') {
+          if (user.isAdmin && this.cookies.get(`${state.cookieName}_admin`)) {
             user.adminMode = true
           } else {
             user.adminMode = false
