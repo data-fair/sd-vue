@@ -77,6 +77,11 @@ export const sessionStoreBuilder = () => ({
       else this.cookies.remove(`${state.cookieName}_org`)
       dispatch('readCookie')
     },
+    setAdminMode({ state, commit, dispatch }, adminMode) {
+      if (adminMode) this.cookies.set(`${state.cookieName}_admin`, 'true')
+      else this.cookies.remove(`${state.cookieName}_admin`)
+      dispatch('readCookie')
+    },
     keepalive({ state, dispatch }) {
       if (!state.user) return
       const httpLib = state.httpLib || this.$axios
@@ -116,6 +121,12 @@ export const sessionStoreBuilder = () => ({
             }
           } else {
             user.organization = null
+          }
+
+          if (user.isAdmin && this.cookies.get(`${state.cookieName}_admin`) === 'true') {
+            user.adminMode = true
+          } else {
+            user.adminMode = false
           }
         }
         commit('updateUser', user)
