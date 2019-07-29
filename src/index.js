@@ -75,12 +75,12 @@ export const sessionStoreBuilder = () => ({
     },
     switchOrganization({ state, commit, dispatch }, organizationId) {
       if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, { domain: state.cookieDomain, path: '/' })
-      else this.cookies.remove(`${state.cookieName}_org`)
+      else this.cookies.set(`${state.cookieName}_org`, '', { domain: state.cookieDomain, path: '/' })
       dispatch('readCookie')
     },
     setAdminMode({ state, commit, dispatch }, adminMode) {
       if (adminMode) this.cookies.set(`${state.cookieName}_admin`, 'true', { domain: state.cookieDomain, path: '/' })
-      else this.cookies.remove(`${state.cookieName}_admin`)
+      else this.cookies.remove(`${state.cookieName}_admin`, 'false', { domain: state.cookieDomain, path: '/' })
       dispatch('readCookie')
     },
     keepalive({ state, dispatch }) {
