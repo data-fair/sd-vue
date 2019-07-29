@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { sessionStoreBuilder } from '@koumoul/sd-vue'
+import { sessionStoreBuilder } from '../../../src/index.js'
 Vue.use(Vuex)
 
 export default () => {

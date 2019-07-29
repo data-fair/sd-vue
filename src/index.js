@@ -24,6 +24,7 @@ export const sessionStoreBuilder = () => ({
     baseUrl: null,
     logoutRedirectUrl: null,
     cookieName: 'id_token',
+    cookieDomain: null,
     interval: 10000,
     autoKeepalive: 300000, // 5 minutes by default
     httpLib: null
@@ -73,12 +74,12 @@ export const sessionStoreBuilder = () => ({
       })
     },
     switchOrganization({ state, commit, dispatch }, organizationId) {
-      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId)
+      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, { domain: state.cookieDomain })
       else this.cookies.remove(`${state.cookieName}_org`)
       dispatch('readCookie')
     },
     setAdminMode({ state, commit, dispatch }, adminMode) {
-      if (adminMode) this.cookies.set(`${state.cookieName}_admin`, 'true')
+      if (adminMode) this.cookies.set(`${state.cookieName}_admin`, 'true', { domain: state.cookieDomain })
       else this.cookies.remove(`${state.cookieName}_admin`)
       dispatch('readCookie')
     },
