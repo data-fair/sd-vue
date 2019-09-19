@@ -40,6 +40,22 @@ export const sessionStoreBuilder = () => ({
         else redirect += '&id_token='
         return `${state.baseUrl}/login?redirect=${encodeURIComponent(redirect)}`
       }
+    },
+    activeAccount(state) {
+      if (!state.user) return null
+      if (state.user.organization) {
+        return {
+          type: 'organization',
+          id: state.user.organization.id,
+          name: state.user.organization.name
+        }
+      } else {
+        return {
+          type: 'user',
+          id: state.user.id,
+          name: state.user.name
+        }
+      }
     }
   },
   mutations: {
