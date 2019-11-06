@@ -103,8 +103,9 @@ export const sessionStoreBuilder = () => ({
       if (!state.user) return
       const httpLib = state.httpLib || this.$axios
       if (httpLib) {
-        return httpLib.post(`${state.baseUrl}/keepalive`).then(() => {
+        return httpLib.post(`${state.baseUrl}/keepalive`).then(res => {
           dispatch('readCookie')
+          return res.data || res.body
         })
       } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
     },
