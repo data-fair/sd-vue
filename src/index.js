@@ -109,6 +109,26 @@ export const sessionStoreBuilder = () => ({
         })
       } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
     },
+    asAdmin({ state, dispatch }, user) {
+      const httpLib = state.httpLib || this.$axios
+      if (httpLib) {
+        if (user) {
+          httpLib.post(`${state.baseUrl}/asadmin`, user).then(() => {
+            dispatch('readCookie')
+            if (state.logoutRedirectUrl) {
+              window.location.href = state.logoutRedirectUrl
+            }
+          })
+        } else {
+          httpLib.delete(`${state.baseUrl}/asadmin`).then(() => {
+            dispatch('readCookie')
+            if (state.logoutRedirectUrl) {
+              window.location.href = state.logoutRedirectUrl
+            }
+          })
+        }
+      } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
+    },
     init({ commit, dispatch }, params) {
       if (!params.cookies) {
         throw new Error('You must init @koumoul/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
