@@ -16,6 +16,15 @@ function jwtDecodeAlive (jwt) {
   return decoded
 }
 
+function goTo (url) {
+  try {
+    window.top.location.href = url
+  } catch (err) {
+    console.error('Failed to navigate in top window')
+    window.location.href = url
+  }
+}
+
 export const sessionStoreBuilder = () => ({
   namespaced: true,
   state: {
@@ -73,7 +82,7 @@ export const sessionStoreBuilder = () => ({
   },
   actions: {
     login({ getters }, redirect) {
-      window.location.href = getters.loginUrl(redirect)
+      goTo(getters.loginUrl(redirect))
     },
     logout({ commit, state }) {
       const httpLib = state.httpLib || this.$axios
@@ -83,8 +92,7 @@ export const sessionStoreBuilder = () => ({
       }
       return httpLib.post(`${state.baseUrl}/logout`).then(() => {
         if (state.logoutRedirectUrl) {
-          window.location.href = state.logoutRedirectUrl
-          return
+          return goTo(state.logoutRedirectUrl)
         }
         commit('setAny', { user: null })
       })
@@ -115,12 +123,12 @@ export const sessionStoreBuilder = () => ({
         if (user) {
           httpLib.post(`${state.baseUrl}/asadmin`, user).then(() => {
             dispatch('readCookie')
-            window.location.href = state.logoutRedirectUrl || '/'
+            goTo(state.logoutRedirectUrl || '/')
           })
         } else {
           httpLib.delete(`${state.baseUrl}/asadmin`).then(() => {
             dispatch('readCookie')
-            window.location.href = state.logoutRedirectUrl || '/'
+            goTo(state.logoutRedirectUrl || '/')
           })
         }
       } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
