@@ -102,10 +102,20 @@ export const sessionStoreBuilder = () => ({
       else this.cookies.set(`${state.cookieName}_org`, '', { domain: state.cookieDomain, path: '/' })
       dispatch('readCookie')
     },
-    setAdminMode({ state, commit, dispatch }, adminMode) {
-      if (adminMode) this.cookies.set(`${state.cookieName}_admin`, 'true', { domain: state.cookieDomain, path: '/' })
-      else this.cookies.set(`${state.cookieName}_admin`, 'false', { domain: state.cookieDomain, path: '/' })
-      dispatch('readCookie')
+    setAdminMode({ state, dispatch, getters }, adminMode) {
+      if (adminMode) {
+        goTo(getters.loginUrl() + `&email=${encodeURIComponent(state.user.email)}&adminMode=true`)
+      } else {
+        const httpLib = state.httpLib || this.$axios
+        if (!httpLib) {
+          console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
+          return
+        }
+        httpLib.delete(`${state.baseUrl}/adminmode`).then(() => {
+          dispatch('readCookie')
+          goTo(state.logoutRedirectUrl || '/')
+        })
+      }
     },
     keepalive({ state, dispatch }) {
       if (!state.user) return
@@ -163,12 +173,6 @@ export const sessionStoreBuilder = () => ({
             }
           } else {
             user.organization = null
-          }
-
-          if (user.isAdmin && this.cookies.get(`${state.cookieName}_admin`)) {
-            user.adminMode = true
-          } else {
-            user.adminMode = false
           }
         }
         commit('updateUser', user)
