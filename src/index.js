@@ -104,7 +104,9 @@ export const sessionStoreBuilder = () => ({
     },
     setAdminMode({ state, dispatch, getters }, adminMode) {
       if (adminMode) {
-        goTo(getters.loginUrl() + `&email=${encodeURIComponent(state.user.email)}&adminMode=true`)
+        let url = getters.loginUrl()
+        if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
+        goTo(url + `&adminMode=true`)
       } else {
         const httpLib = state.httpLib || this.$axios
         if (!httpLib) {
