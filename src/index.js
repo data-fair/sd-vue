@@ -111,7 +111,7 @@ export const sessionStoreBuilder = () => ({
         redirect = params.redirect
       }
       if (adminMode) {
-        let url = getters.loginUrl(redirect, false)
+        let url = getters.loginUrl(redirect, true)
         if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
         goTo(url + `&adminMode=true`)
       } else {
