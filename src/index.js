@@ -102,9 +102,16 @@ export const sessionStoreBuilder = () => ({
       else this.cookies.set(`${state.cookieName}_org`, '', { domain: state.cookieDomain, path: '/' })
       dispatch('readCookie')
     },
-    setAdminMode({ state, dispatch, getters }, adminMode) {
+    setAdminMode({ state, dispatch, getters }, params) {
+      let adminMode, redirect
+      if (typeof params === 'boolean') {
+        adminMode = params
+      } else {
+        adminMode = params.value
+        redirect = params.redirect
+      }
       if (adminMode) {
-        let url = getters.loginUrl()
+        let url = getters.loginUrl(redirect)
         if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
         goTo(url + `&adminMode=true`)
       } else {
@@ -115,7 +122,7 @@ export const sessionStoreBuilder = () => ({
         }
         httpLib.delete(`${state.baseUrl}/adminmode`).then(() => {
           dispatch('readCookie')
-          goTo(state.logoutRedirectUrl || '/')
+          goTo(redirect || state.logoutRedirectUrl || '/')
         })
       }
     },
