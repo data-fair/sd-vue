@@ -40,10 +40,10 @@ export const sessionStoreBuilder = () => ({
   },
   getters: {
     loginUrl(state) {
-      return redirect => {
+      return (redirect, noImmediate) => {
         // Login can also be used to redirect user immediately if he is already logged
         // shorter than "logIfNecessaryOrRedirect"
-        if (redirect && state.user) return redirect
+        if (redirect && state.user && !noImmediate) return redirect
         redirect = redirect && typeof redirect === 'string' ? redirect : `${window.location.origin}${window.location.pathname}`
         if (redirect.indexOf('?') === -1) redirect += '?id_token='
         else redirect += '&id_token='
@@ -111,7 +111,7 @@ export const sessionStoreBuilder = () => ({
         redirect = params.redirect
       }
       if (adminMode) {
-        let url = getters.loginUrl(redirect)
+        let url = getters.loginUrl(redirect, false)
         if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
         goTo(url + `&adminMode=true`)
       } else {
