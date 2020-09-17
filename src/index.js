@@ -65,6 +65,14 @@ export const sessionStoreBuilder = () => ({
           name: state.user.name
         }
       }
+    },
+    isAccountAdmin(state) {
+      if (!state.user) return false
+      if (state.user.organization) {
+        return state.user.organization.role === 'admin'
+      } else {
+        return true
+      }
     }
   },
   mutations: {
