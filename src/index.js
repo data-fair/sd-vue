@@ -1,5 +1,23 @@
 import jwtDecode from 'jwt-decode'
 
+// solve hash added by facebook after oauth redirect,
+// see https://stackoverflow.com/questions/7131909/facebook-callback-appends-to-return-url
+if (window.location.hash && window.location.hash === '#_=_') {
+  if (window.history && window.history.pushState) {
+    window.history.pushState('', document.title, window.location.pathname)
+  } else {
+    // Prevent scrolling by storing the page's current scroll offset
+    var scroll = {
+      top: document.body.scrollTop,
+      left: document.body.scrollLeft
+    }
+    window.location.hash = ''
+    // Restore the scroll offset, should be flicker free
+    document.body.scrollTop = scroll.top
+    document.body.scrollLeft = scroll.left
+  }
+}
+
 function jwtDecodeAlive (jwt) {
   if (!jwt) return null
   const decoded = jwtDecode(jwt)
