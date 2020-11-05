@@ -59,7 +59,8 @@ export const sessionStoreBuilder = () => ({
     cookieDomain: null,
     interval: 10000,
     autoKeepalive: 300000, // 5 minutes by default
-    httpLib: null
+    httpLib: null,
+    sameSite: null
   },
   getters: {
     loginUrl(state) {
@@ -129,8 +130,8 @@ export const sessionStoreBuilder = () => ({
       })
     },
     switchOrganization({ state, commit, dispatch }, organizationId) {
-      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, { domain: state.cookieDomain, path: '/' })
-      else this.cookies.set(`${state.cookieName}_org`, '', { domain: state.cookieDomain, path: '/' })
+      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, { domain: state.cookieDomain, path: '/', sameSite: state.sameSite })
+      else this.cookies.set(`${state.cookieName}_org`, '', { domain: state.cookieDomain, path: '/', sameSite: state.sameSite })
       dispatch('readCookie')
     },
     setAdminMode({ state, dispatch, getters }, params) {
