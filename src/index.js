@@ -27,13 +27,13 @@ function jwtDecodeAlive (jwt) {
   if (!jwt) return null
   const decoded = jwtDecode(jwt)
   if (!decoded) return null
-  const now = Date.now().valueOf() / 1000
+  const now = Math.ceil(Date.now().valueOf() / 1000)
   if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
     console.error(`token expired: ${decoded.exp}<${now},  ${JSON.stringify(decoded)}`)
     return null
   }
   if (typeof decoded.nbf !== 'undefined' && decoded.nbf > now) {
-    console.error(`token not yet valid: ${decoded.nbf}>${now}, ${JSON.stringify(decoded)}`)
+    console.warn(`token not yet valid: ${decoded.nbf}>${now}, ${JSON.stringify(decoded)}`)
     // do not return null here, this is probably a false flag due to a slightly mismatched clock
     // return null
   }
