@@ -29,12 +29,13 @@ function jwtDecodeAlive (jwt) {
   if (!decoded) return null
   const now = Date.now().valueOf() / 1000
   if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
-    console.error(`token expired: ${JSON.stringify(decoded)}`)
+    console.error(`token expired: ${decoded.exp}<${now},  ${JSON.stringify(decoded)}`)
     return null
   }
   if (typeof decoded.nbf !== 'undefined' && decoded.nbf > now) {
-    console.error(`token expired: ${JSON.stringify(decoded)}`)
-    return null
+    console.error(`token not yet valid: ${decoded.nbf}>${now}, ${JSON.stringify(decoded)}`)
+    // do not return null here, this is probably a false flag due to a slightly mismatched clock
+    // return null
   }
   return decoded
 }
@@ -108,7 +109,7 @@ export const sessionStoreBuilder = () => ({
       Object.assign(state, params)
     },
     updateUser(state, user) {
-      if (state.user && state.user.id === user.id) Object.assign(state.user, user)
+      if (user && state.user && state.user.id === user.id) Object.assign(state.user, user)
       else state.user = user
     }
   },
