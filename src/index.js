@@ -137,7 +137,7 @@ export const sessionStoreBuilder = () => ({
       if (state.sameSite) cookieOpts.sameSite = state.sameSite
       if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, cookieOpts)
       else this.cookies.set(`${state.cookieName}_org`, '', cookieOpts)
-      dispatch('readCookie')
+      dispatch('readCookie', { fromRes: true })
     },
     setAdminMode({ state, dispatch, getters }, params) {
       let adminMode, redirect
@@ -199,11 +199,11 @@ export const sessionStoreBuilder = () => ({
       dispatch('readCookie')
     },
     readCookie({ state, commit }) {
-      const cookie = this.cookies.get(state.cookieName)
+      const cookie = this.cookies.get(state.cookieName, { fromRes: true }) || this.cookies.get(state.cookieName)
       if (cookie) {
         const user = jwtDecodeAlive(cookie)
         if (user) {
-          const organizationId = this.cookies.get(`${state.cookieName}_org`)
+          const organizationId = this.cookies.get(`${state.cookieName}_org`, { fromRes: true }) || this.cookies.get(`${state.cookieName}_org`)
           if (organizationId) {
             user.organization = (user.organizations || []).find(o => o.id === organizationId)
 
