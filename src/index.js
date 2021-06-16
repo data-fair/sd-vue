@@ -200,12 +200,12 @@ export const sessionStoreBuilder = () => ({
     },
     readCookie({ state, commit }) {
       let cookie = this.cookies.get(state.cookieName, { fromRes: true })
-      if (cookie !== undefined) cookie = this.cookies.get(state.cookieName)
+      if (cookie === undefined) cookie = this.cookies.get(state.cookieName)
       if (cookie) {
         const user = jwtDecodeAlive(cookie)
         if (user) {
           let organizationId = this.cookies.get(`${state.cookieName}_org`, { fromRes: true })
-          if (organizationId !== undefined) organizationId = this.cookies.get(`${state.cookieName}_org`)
+          if (organizationId === undefined) organizationId = this.cookies.get(`${state.cookieName}_org`)
           if (organizationId) {
             user.organization = (user.organizations || []).find(o => o.id === organizationId)
 
