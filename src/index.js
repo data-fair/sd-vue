@@ -199,11 +199,13 @@ export const sessionStoreBuilder = () => ({
       dispatch('readCookie')
     },
     readCookie({ state, commit }) {
-      const cookie = this.cookies.get(state.cookieName, { fromRes: true }) || this.cookies.get(state.cookieName)
+      let cookie = this.cookies.get(state.cookieName, { fromRes: true })
+      if (cookie !== undefined) cookie = this.cookies.get(state.cookieName)
       if (cookie) {
         const user = jwtDecodeAlive(cookie)
         if (user) {
-          const organizationId = this.cookies.get(`${state.cookieName}_org`, { fromRes: true }) || this.cookies.get(`${state.cookieName}_org`)
+          let organizationId = this.cookies.get(`${state.cookieName}_org`, { fromRes: true })
+          if (organizationId !== undefined) organizationId = this.cookies.get(`${state.cookieName}_org`)
           if (organizationId) {
             user.organization = (user.organizations || []).find(o => o.id === organizationId)
 
