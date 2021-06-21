@@ -54,12 +54,11 @@ export const sessionStoreBuilder = () => ({
   state: {
     user: null,
     initialized: false,
-    baseUrl: null,
+    directoryUrl: null,
     logoutRedirectUrl: null,
     cookieName: 'id_token',
-    cookieDomain: null,
     interval: 10000,
-    autoKeepalive: 300000, // 5 minutes by default
+    autoKeepalive: 0,
     httpLib: null,
     sameSite: null
   },
@@ -70,9 +69,7 @@ export const sessionStoreBuilder = () => ({
         // shorter than "logIfNecessaryOrRedirect"
         if (redirect && state.user && !noImmediate) return redirect
         redirect = redirect && typeof redirect === 'string' ? redirect : `${window.location.origin}${window.location.pathname}`
-        if (redirect.indexOf('?') === -1) redirect += '?id_token='
-        else redirect += '&id_token='
-        return `${state.baseUrl}/login?redirect=${encodeURIComponent(redirect)}`
+        return `${state.directoryUrl}/login?redirect=${encodeURIComponent(redirect)}`
       }
     },
     activeAccount(state) {
@@ -123,7 +120,7 @@ export const sessionStoreBuilder = () => ({
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
       }
-      return httpLib.post(`${state.baseUrl}/logout`).then(() => {
+      return httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
         if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
         }
@@ -132,8 +129,6 @@ export const sessionStoreBuilder = () => ({
     },
     switchOrganization({ state, commit, dispatch }, organizationId) {
       const cookieOpts = { path: '/', sameSite: state.sameSite }
-      if (state.cookieDomain) cookieOpts.domain = state.cookieDomain
-      if (state.sessionDomain) cookieOpts.domain = state.sessionDomain
       if (state.sameSite) cookieOpts.sameSite = state.sameSite
       if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, cookieOpts)
       else this.cookies.set(`${state.cookieName}_org`, '', cookieOpts)
@@ -157,7 +152,7 @@ export const sessionStoreBuilder = () => ({
           console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
           return
         }
-        httpLib.delete(`${state.baseUrl}/adminmode`).then(() => {
+        httpLib.delete(`${state.directoryUrl}/api/auth/adminmode`).then(() => {
           dispatch('readCookie')
           goTo(redirect || state.logoutRedirectUrl || '/')
         })
@@ -167,7 +162,7 @@ export const sessionStoreBuilder = () => ({
       if (!state.user) return
       const httpLib = state.httpLib || this.$axios
       if (httpLib) {
-        return httpLib.post(`${state.baseUrl}/keepalive`).then(res => {
+        return httpLib.post(`${state.directoryUrl}/api/auth/keepalive`).then(res => {
           dispatch('readCookie')
           return res.data || res.body
         })
@@ -177,12 +172,12 @@ export const sessionStoreBuilder = () => ({
       const httpLib = state.httpLib || this.$axios
       if (httpLib) {
         if (user) {
-          httpLib.post(`${state.baseUrl}/asadmin`, user).then(() => {
+          httpLib.post(`${state.directoryUrl}/api/auth/asadmin`, user).then(() => {
             dispatch('readCookie')
             goTo(state.logoutRedirectUrl || '/')
           })
         } else {
-          httpLib.delete(`${state.baseUrl}/asadmin`).then(() => {
+          httpLib.delete(`${state.directoryUrl}/api/auth/asadmin`).then(() => {
             dispatch('readCookie')
             goTo(state.logoutRedirectUrl || '/')
           })
@@ -195,6 +190,10 @@ export const sessionStoreBuilder = () => ({
       }
       this.cookies = params.cookies
       delete params.cookies
+      if (params.baseUrl) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
+      if (params.cookieDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
+      if (params.sessionDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
+      if (!params.directoryUrl) throw new Error('directoryUrl param is required')
       commit('setAny', params)
       dispatch('readCookie')
     },
@@ -239,6 +238,7 @@ export const sessionStoreBuilder = () => ({
         dispatch('readCookie')
         setInterval(() => dispatch('readCookie'), state.interval)
         if (state.autoKeepalive) {
+          console.warn('autokeepalive option is not recommended, it creates unnecessary http traffic')
           dispatch('keepalive')
           setInterval(() => dispatch('keepalive'), state.autoKeepalive)
         }
