@@ -193,7 +193,7 @@ export const sessionStoreBuilder = () => ({
       if (params.baseUrl) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
       if (params.cookieDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
       if (params.sessionDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
-      if (!params.directoryUrl) throw new Error('directoryUrl param is required')
+      if (!params.directoryUrl && params.directoryUrl !== '') throw new Error('directoryUrl param is required')
       commit('setAny', params)
       dispatch('readCookie')
     },
