@@ -64,12 +64,18 @@ export const sessionStoreBuilder = () => ({
   },
   getters: {
     loginUrl(state) {
-      return (redirect, noImmediate) => {
+      return (redirect, noImmediate, extraParams = {}) => {
         // Login can also be used to redirect user immediately if he is already logged
         // shorter than "logIfNecessaryOrRedirect"
         if (redirect && state.user && !noImmediate) return redirect
-        redirect = redirect && typeof redirect === 'string' ? redirect : `${window.location.origin}${window.location.pathname}`
-        return `${state.directoryUrl}/login?redirect=${encodeURIComponent(redirect)}`
+        if (!redirect || typeof redirect !== 'string') {
+          redirect = global.location ? `${global.location.origin}${global.location.pathname}` : ''
+        }
+        let url = `${state.directoryUrl}/login?redirect=${encodeURIComponent(redirect)}`
+        Object.keys(extraParams).filter(key => ![null, undefined, ''].includes(extraParams[key])).forEach(key => {
+          url += `&${key}=${encodeURIComponent(extraParams[key])}`
+        })
+        return url
       }
     },
     activeAccount(state) {
