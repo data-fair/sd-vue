@@ -172,7 +172,9 @@ export const sessionStoreBuilder = () => ({
           dispatch('readCookie')
           return res.data || res.body
         })
-      } else console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
+      } else {
+        console.error('No http client found to send keepalive action. You should pass Vue.http or Vue.axios as init param.')
+      }
     },
     asAdmin({ state, dispatch }, user) {
       const httpLib = state.httpLib || this.$axios
@@ -241,8 +243,26 @@ export const sessionStoreBuilder = () => ({
       this.cookies = this.cookies || cookies
 
       setTimeout(() => {
-        dispatch('readCookie')
-        setInterval(() => dispatch('readCookie'), state.interval)
+        // always start by a keelalive to fetch latest session info on page load
+        dispatch('keepalive')
+
+        setInterval(() => {
+          // read the cookie regularily in case if was updated by another page
+          dispatch('readCookie')
+
+          // also check if the token is getting a little bit old, and renew it
+          if (state.user && state.user.exp) {
+            // console.log('JWT token from cookie is set to expire on', new Date(state.user.exp * 1000))
+            const timestamp = Date.now() / 1000
+            const tooOld = timestamp > (state.user.iat + ((state.user.exp - state.user.iat) / 3))
+            if (tooOld) {
+              // console.log('The token has lived more than a third of its lifetime, renew it')
+              dispatch('keepalive')
+            }
+          }
+        }, state.interval)
+
+        // a "stupid" keelalive loop that spams the server with keepalive requests, avoid it
         if (state.autoKeepalive) {
           console.warn('autokeepalive option is not recommended, it creates unnecessary http traffic')
           dispatch('keepalive')
