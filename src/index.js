@@ -59,7 +59,6 @@ export const sessionStoreBuilder = () => ({
     cookieName: 'id_token',
     interval: 10000,
     autoKeepalive: 0,
-    httpLib: null,
     sameSite: null
   },
   getters: {
@@ -121,12 +120,11 @@ export const sessionStoreBuilder = () => ({
       goTo(getters.loginUrl(redirect))
     },
     logout({ commit, state }) {
-      const httpLib = state.httpLib || this.$axios
-      if (!httpLib) {
+      if (!this.httpLib) {
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
       }
-      return httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
+      return this.httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
         if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
         }
@@ -153,12 +151,11 @@ export const sessionStoreBuilder = () => ({
         if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
         goTo(url + `&adminMode=true`)
       } else {
-        const httpLib = state.httpLib || this.$axios
-        if (!httpLib) {
+        if (!this.httpLib) {
           console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
           return
         }
-        httpLib.delete(`${state.directoryUrl}/api/auth/adminmode`).then(() => {
+        this.httpLib.delete(`${state.directoryUrl}/api/auth/adminmode`).then(() => {
           dispatch('readCookie')
           goTo(redirect || state.logoutRedirectUrl || '/')
         })
@@ -166,9 +163,8 @@ export const sessionStoreBuilder = () => ({
     },
     keepalive({ state, dispatch }) {
       if (!state.user) return
-      const httpLib = state.httpLib || this.$axios
-      if (httpLib) {
-        return httpLib.post(`${state.directoryUrl}/api/auth/keepalive`).then(res => {
+      if (this.httpLib) {
+        return this.httpLib.post(`${state.directoryUrl}/api/auth/keepalive`).then(res => {
           dispatch('readCookie')
           return res.data || res.body
         })
@@ -177,15 +173,14 @@ export const sessionStoreBuilder = () => ({
       }
     },
     asAdmin({ state, dispatch }, user) {
-      const httpLib = state.httpLib || this.$axios
-      if (httpLib) {
+      if (this.httpLib) {
         if (user) {
-          httpLib.post(`${state.directoryUrl}/api/auth/asadmin`, user).then(() => {
+          this.httpLib.post(`${state.directoryUrl}/api/auth/asadmin`, user).then(() => {
             dispatch('readCookie')
             goTo(state.logoutRedirectUrl || '/')
           })
         } else {
-          httpLib.delete(`${state.directoryUrl}/api/auth/asadmin`).then(() => {
+          this.httpLib.delete(`${state.directoryUrl}/api/auth/asadmin`).then(() => {
             dispatch('readCookie')
             goTo(state.logoutRedirectUrl || '/')
           })
@@ -198,6 +193,8 @@ export const sessionStoreBuilder = () => ({
       }
       this.cookies = params.cookies
       delete params.cookies
+      this.httpLib = params.httpLib || this.$axios
+      delete params.httpLib
       if (params.baseUrl) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
       if (params.cookieDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
       if (params.sessionDomain) throw new Error('baseUrl param is deprecated, replaced with directoryUrl')
