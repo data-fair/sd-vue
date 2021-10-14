@@ -59,7 +59,8 @@ export const sessionStoreBuilder = () => ({
     cookieName: 'id_token',
     interval: 10000,
     autoKeepalive: 0,
-    sameSite: null
+    sameSite: null,
+    activeAccountDetails: null
   },
   getters: {
     loginUrl(state) {
@@ -203,7 +204,7 @@ export const sessionStoreBuilder = () => ({
       commit('setAny', { ...params, directoryUrl })
       dispatch('readCookie')
     },
-    readCookie({ state, commit }) {
+    readCookie({ state, commit, getters }) {
       let cookie = this.cookies.get(state.cookieName, { fromRes: true })
       if (cookie === undefined) cookie = this.cookies.get(state.cookieName)
       if (cookie) {
@@ -231,6 +232,9 @@ export const sessionStoreBuilder = () => ({
         commit('updateUser', user)
       } else {
         commit('setAny', { user: null })
+      }
+      if (state.activeAccountDetails && (!getters.activeAccount || getters.activeAccount.type !== state.activeAccountDetails.type || getters.activeAccount.id !== state.activeAccountDetails.id)) {
+        commit('setAny', { activeAccountDetails: null })
       }
       commit('setAny', { initialized: true })
     },
@@ -267,6 +271,26 @@ export const sessionStoreBuilder = () => ({
           setInterval(() => dispatch('keepalive'), state.autoKeepalive)
         }
       }, 0)
+    },
+    fetchActiveAccountDetails({ state, getters, commit }, forceRefresh = false) {
+      if (!getters.activeAccount) return
+      if (
+        !forceRefresh &&
+        state.activeAccountDetails &&
+        state.activeAccountDetails.type === getters.activeAccount.type &&
+        state.activeAccountDetails.id === getters.activeAccount.id
+      ) {
+        return
+      }
+      if (this.httpLib) {
+        return this.httpLib.get(`${state.directoryUrl}/api/${getters.activeAccount.type}s/${getters.activeAccount.id}`).then(res => {
+          const data = { ...(res.data || res.body), type: getters.activeAccount.type }
+          commit('setAny', { activeAccountDetails: data })
+          return data
+        })
+      } else {
+        console.error('No http client found to fetch active account details. You should pass Vue.http or Vue.axios as init param.')
+      }
     }
   }
 })
