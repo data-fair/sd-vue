@@ -245,11 +245,11 @@ export const sessionStoreBuilder = () => ({
       this.cookies = this.cookies || cookies
 
       setTimeout(() => {
-        // always start by a keelalive to fetch latest session info on page load
+        // always start by a keepalive to fetch latest session info on page load
         dispatch('keepalive')
 
         setInterval(() => {
-          // read the cookie regularily in case if was updated by another page
+          // read the cookie regularily in case it was updated by another page
           dispatch('readCookie')
 
           // also check if the token is getting a little bit old, and renew it
