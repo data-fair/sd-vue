@@ -1,7 +1,7 @@
 const app = require('./app')
 
 app.run().then(() => {
-  console.log('Listening on http://localhost:8080')
+  console.log('Listening on http://localhost:5676')
 }, err => { throw err })
 
 process.on('SIGTERM', function onSigterm () {

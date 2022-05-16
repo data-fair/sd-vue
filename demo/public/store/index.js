@@ -18,7 +18,6 @@ export default () => {
     actions: {
       nuxtServerInit({ commit, dispatch }, { req, env }) {
         commit('setAny', { env })
-        dispatch('session/init', { cookies: this.$cookies, baseUrl: env.publicUrl + '/api/session' })
       },
       async getProtectedResource({ commit }) {
         let protectedResource

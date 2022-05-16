@@ -1,0 +1,21 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:4.2
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+  sd:
+    image: ghcr.io/data-fair/simple-directory:master
+    network_mode: host
+    environment:
+      - DEBUG=webhooks
+      - ADMINS=["alban.mouton@koumoul.com", "superadmin@test.com"]
+      - PUBLIC_URL=http://localhost:5676/simple-directory
+      - MAILDEV_ACTIVE=true
+      - STORAGE_TYPE=mongo
+      - STORAGE_MONGO_URL=mongodb://localhost:27017/simple-directory
+
+volumes:
+  mongo-data:

@@ -60,7 +60,8 @@ export const sessionStoreBuilder = () => ({
     interval: 10000,
     autoKeepalive: 0,
     sameSite: null,
-    activeAccountDetails: null
+    activeAccountDetails: null,
+    reloadAfterSwitchOrganization: true
   },
   getters: {
     loginUrl(state) {
@@ -137,7 +138,8 @@ export const sessionStoreBuilder = () => ({
       if (state.sameSite) cookieOpts.sameSite = state.sameSite
       if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, cookieOpts)
       else this.cookies.set(`${state.cookieName}_org`, '', cookieOpts)
-      dispatch('readCookie', { fromRes: true })
+      if (state.reloadAfterSwitchOrganization && typeof window !== 'undefined') window.location.reload()
+      else dispatch('readCookie', { fromRes: true })
     },
     setAdminMode({ state, dispatch, getters }, params) {
       let adminMode, redirect

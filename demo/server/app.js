@@ -1,27 +1,24 @@
-const config = require('../config')
 const express = require('express')
 const http = require('http')
 const eventToPromise = require('event-to-promise')
-const session = require('@data-fair/sd-express')(config)
+const { createProxyMiddleware } = require('http-proxy-middleware')
+const session = require('@data-fair/sd-express')({ directoryUrl: 'http://localhost:8080' })
 
 const app = express()
 const server = http.createServer(app)
+
+app.use('/simple-directory', createProxyMiddleware({ target: 'http://localhost:8080', pathRewrite: { '^/simple-directory': '' } }))
 
 // This route is protected by authentication
 app.get('/api/protected', session.auth, (req, res) => {
   if (!req.user) return res.status(401).send('User is not authenticated and this resource is protected.')
   res.send('Success!!')
 })
-// This will expose login/logout routes
-app.use('/api/session', session.router)
 
 exports.run = async() => {
   // Serve UI resources
-  const nuxt = await require('./nuxt')()
-  // Pages can be used as callback urls for the login
-  app.use(session.loginCallback)
-  app.use(nuxt)
-  server.listen(8080)
+  app.use(await require('./nuxt')())
+  server.listen(5676)
   await eventToPromise(server, 'listening')
   return app
 }

@@ -8,6 +8,7 @@ Execute the demo/recipe project to show integration of authentication/session ba
 
     cd demo
     npm i
+    docker-compose up -d
     npm run dev
 
 When developing you can build sd-vue then update the version in the demo using this command:
