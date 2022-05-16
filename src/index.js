@@ -190,7 +190,7 @@ export const sessionStoreBuilder = () => ({
     },
     init({ commit, dispatch }, params) {
       if (!params.cookies) {
-        throw new Error('You must init @koumoul/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
+        throw new Error('You must init @data-fair/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
       }
       this.cookies = params.cookies
       delete params.cookies
@@ -240,7 +240,7 @@ export const sessionStoreBuilder = () => ({
     },
     loop({ state, dispatch }, cookies) {
       if (!this.cookies && !cookies) {
-        throw new Error('You must init @koumoul/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
+        throw new Error('You must init @data-fair/sd-vue vith a "cookies" wrapper with simple get and set methods like js-cookie, cookie-universal-nuxt or other')
       }
       this.cookies = this.cookies || cookies
 

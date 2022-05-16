@@ -2,7 +2,7 @@
 
 Use as a module
 
-    npm i @koumoul/sd-vue
+    npm i @data-fair/sd-vue
 
 Execute the demo/recipe project to show integration of authentication/session based on simple-directory in a nuxt project.
 
