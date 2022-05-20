@@ -25,7 +25,7 @@
 
       <v-list
         outlined
-        class="pb-0"
+        class="py-0"
       >
         <!-- current account, not actionable -->
         <v-list-item disabled :style="activeAccount.type !== 'user' ? 'padding-left:0' : ''">
