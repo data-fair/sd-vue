@@ -39,10 +39,10 @@
         </v-list-item>
 
         <!-- account switching (personal account and organizations) -->
-        <template v-if="user.organizations.length">
+        <template v-if="user.organizations.length > 1 || (user.organizations.length === 1 && !user.ipa)">
           <v-subheader v-t="'switchAccount'" style="height: 24px" />
           <v-list-item
-            v-if="activeAccount.type !== 'user'"
+            v-if="activeAccount.type !== 'user' && !user.ipa"
             id="toolbar-menu-switch-user"
             @click="switchOrganization()"
           >
