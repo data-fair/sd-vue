@@ -96,7 +96,7 @@
           <v-list-item-action><v-icon>mdi-weather-night</v-icon></v-list-item-action>
           <v-list-item-title style="overflow: visible;">
             <v-switch
-              v-model="$vuetify.theme.dark"
+              :input-value="$vuetify.theme.dark"
               hide-details
               class="mt-0"
               :label="$t('darkMode')"
