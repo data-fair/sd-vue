@@ -151,7 +151,7 @@ export default {
     ...mapActions('session', ['logout', 'login', 'switchOrganization']),
     setDarkCookie (value) {
       const maxAge = 60 * 60 * 24 * 100 // 100 days
-      this.$cookies.set('theme_dark', '' + value, { maxAge })
+      this.$cookies.set('theme_dark', '' + value, { maxAge, path: '/' })
       window.location.reload()
     },
     setAdminMode (value) {
