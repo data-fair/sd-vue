@@ -11,7 +11,7 @@
       v-else
       offset-y
       nudge-left
-      max-height="510"
+      max-height="700"
     >
       <template #activator="{on}">
         <v-btn
