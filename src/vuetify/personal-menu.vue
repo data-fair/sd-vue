@@ -33,8 +33,8 @@
           <avatar show-account style="margin-right: 16px;" />
           
           <v-list-item-content class="text--secondary">
-            <v-list-item-title class="font-weight-medium">{{user.name}}</v-list-item-title>
-            <v-list-item-subtitle>{{ activeAccount.type === 'user' ? $t('personalAccount') : activeAccount.name }}</v-list-item-subtitle>
+            <v-list-item-title class="font-weight-medium">{{ activeAccount.type === 'user' ? $t('personalAccount') : activeAccount.name }}</v-list-item-title>
+            <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
 
@@ -46,11 +46,11 @@
             id="toolbar-menu-switch-user"
             @click="switchOrganization()"
           >
-            <v-list-item-avatar class="ml-0 my-0">
+            <v-list-item-action class=" my-0">
               <v-avatar :size="28">
                 <img :src="`${directoryUrl}/api/avatars/user/${user.id}/avatar.png`">
               </v-avatar>
-            </v-list-item-avatar>
+            </v-list-item-action>
             <v-list-item-title v-t="'personalAccount'" />
           </v-list-item>
           <v-list-item
@@ -59,11 +59,11 @@
             :key="organization.id"
             @click="switchOrganization(organization.id)"
           >
-            <v-list-item-avatar class="ml-0 my-0">
+            <v-list-item-action class="my-0">
               <v-avatar :size="28">
                 <img :src="`${directoryUrl}/api/avatars/organization/${organization.id}/avatar.png`">
               </v-avatar>
-            </v-list-item-avatar>
+            </v-list-item-action>
             <v-list-item-title>{{ organization.name }}</v-list-item-title>
           </v-list-item>
         </template>

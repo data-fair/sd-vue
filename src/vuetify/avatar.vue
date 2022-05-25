@@ -1,17 +1,25 @@
 <template>
   <div class="sd-avatar" :class="{'has-org-avatar': showAccount && activeAccount.type !== 'user'}">
     <v-avatar
+      v-if="showAccount && activeAccount.type === 'user'"
       class="user-avatar"
       :size="36"
     >
       <img :src="`${directoryUrl}/api/avatars/user/${user.id}/avatar.png`">
     </v-avatar>
     <v-avatar
+      v-else
+      class="user-avatar"
+      :size="36"
+    >
+      <img :src="`${directoryUrl}/api/avatars/${activeAccount.type}/${activeAccount.id}/avatar.png`">
+    </v-avatar>
+    <v-avatar
       class="org-avatar"
       :size="28"
       v-if="showAccount && activeAccount.type !== 'user'"
     >
-      <img :src="`${directoryUrl}/api/avatars/${activeAccount.type}/${activeAccount.id}/avatar.png`">
+      <img :src="`${directoryUrl}/api/avatars/user/${user.id}/avatar.png`">
     </v-avatar>
   </div>
 </template>
