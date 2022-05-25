@@ -61,7 +61,8 @@ export const sessionStoreBuilder = () => ({
     autoKeepalive: 0,
     sameSite: null,
     activeAccountDetails: null,
-    reloadAfterSwitchOrganization: true
+    reloadAfterSwitchOrganization: true,
+    reloadAfterLogout: true
   },
   getters: {
     loginUrl(state) {
@@ -129,6 +130,8 @@ export const sessionStoreBuilder = () => ({
       return this.httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
         if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
+        } else if (state.reloadAfterLogout && typeof window !== 'undefined') {
+          window.location.reload()
         }
         commit('setAny', { user: null })
       })
