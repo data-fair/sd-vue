@@ -73,22 +73,27 @@
         <slot name="actions-before"></slot>
 
         <!-- toggle admin mode -->
-        <template v-if="user.isAdmin">
-          <v-list-item dense>
-            <v-list-item-action><v-icon>mdi-shield-alert</v-icon></v-list-item-action>
-            <v-list-item-title style="overflow: visible;">
-              <v-switch
-                v-model="user.adminMode"
-                color="admin"
-                hide-details
-                class="mt-0"
-                :label="$t('adminMode')"
-                @change="setAdminMode"
-              />
-            </v-list-item-title>
-          </v-list-item>
-        </template>
+        <v-list-item dense v-if="user.isAdmin">
+          <v-list-item-action><v-icon>mdi-shield-alert</v-icon></v-list-item-action>
+          <v-list-item-title style="overflow: visible;">
+            <v-switch
+              v-model="user.adminMode"
+              color="admin"
+              hide-details
+              class="mt-0"
+              :label="$t('adminMode')"
+              @change="setAdminMode"
+            />
+          </v-list-item-title>
+        </v-list-item>
 
+        <!-- get back to normal admin session after impersonating a user -->
+        <v-list-item v-if="user.asAdmin" @click="asAdmin()" color="admin">
+          <v-list-item-action><v-icon>mdi-account-switch-outline</v-icon></v-list-item-action>
+          <v-list-item-title>{{ $t('backToAdmin') }}</v-list-item-title>
+        </v-list-item>
+
+        <!-- switch dark mode -->
         <v-list-item
           v-if="darkModeSwitch"
           dense
@@ -106,6 +111,7 @@
           </v-list-item-title>
         </v-list-item>
 
+        <!-- logout button -->
         <v-divider />
         <v-list-item @click="logout">
           <v-list-item-action><v-icon>mdi-logout</v-icon></v-list-item-action>
@@ -123,6 +129,7 @@ fr:
   personalAccount: Compte personnel
   switchAccount: Changer de compte
   adminMode: mode admin
+  backToAdmin: Revenir à ma session administrateur
   darkMode: mode nuit
 en:
   login: Login / Sign up
@@ -130,6 +137,7 @@ en:
   personalAccount: Personal account
   switchAccount: Switch account
   adminMode: admin mode
+  backToAdmin: Return to administrator session
   darkMode: night mode
 </i18n>
 
@@ -148,7 +156,7 @@ export default {
     ...mapGetters('session', ['activeAccount'])
   },
   methods: {
-    ...mapActions('session', ['logout', 'login', 'switchOrganization']),
+    ...mapActions('session', ['logout', 'login', 'switchOrganization', 'asAdmin']),
     setDarkCookie (value) {
       const maxAge = 60 * 60 * 24 * 100 // 100 days
       this.$cookies.set('theme_dark', '' + value, { maxAge, path: '/' })
