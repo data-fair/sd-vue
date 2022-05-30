@@ -249,6 +249,8 @@ export const sessionStoreBuilder = () => ({
       }
       this.cookies = this.cookies || cookies
 
+      this.httpLib = this.httpLib || this.$axios
+
       setTimeout(() => {
         // always start by a keepalive to fetch latest session info on page load
         dispatch('keepalive')
