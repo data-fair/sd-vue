@@ -83,11 +83,15 @@ export const sessionStoreBuilder = () => ({
     activeAccount(state) {
       if (!state.user) return null
       if (state.user.organization) {
-        return {
+        const account = {
           type: 'organization',
           id: state.user.organization.id,
           name: state.user.organization.name
         }
+        if (state.user.organization.department) {
+          account.department = state.user.organization.department
+        }
+        return account
       } else {
         return {
           type: 'user',
@@ -96,13 +100,13 @@ export const sessionStoreBuilder = () => ({
         }
       }
     },
-    isAccountAdmin(state) {
-      if (!state.user) return false
-      if (state.user.organization) {
-        return state.user.organization.role === 'admin'
-      } else {
-        return true
-      }
+    accountRole(state) {
+      if (!state.user) return null
+      if (state.user.organization) return state.user.organization.role
+      else return 'admin'
+    },
+    isAccountAdmin(state, getters) {
+      return getters.accountRole === 'admin'
     }
   },
   mutations: {

@@ -33,7 +33,12 @@
           <avatar show-account style="margin-right: 16px;" />
           
           <v-list-item-content class="text--secondary">
-            <v-list-item-title class="font-weight-medium">{{ activeAccount.type === 'user' ? $t('personalAccount') : activeAccount.name }}</v-list-item-title>
+            <v-list-item-title>
+              {{ activeAccount.type === 'user' ? $t('personalAccount') : activeAccount.name }}
+            </v-list-item-title>
+            <v-list-item-subtitle v-if="activeAccount.department">
+              {{activeAccount.department}}
+            </v-list-item-subtitle>
             <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -64,7 +69,14 @@
                 <img :src="`${directoryUrl}/api/avatars/organization/${organization.id}/avatar.png`">
               </v-avatar>
             </v-list-item-action>
-            <v-list-item-title>{{ organization.name }}</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ organization.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle v-if="organization.department">
+                {{organization.department}}
+              </v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
         </template>
 
