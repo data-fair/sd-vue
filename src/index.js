@@ -118,8 +118,13 @@ export const sessionStoreBuilder = () => ({
       Object.assign(state, params)
     },
     updateUser(state, user) {
-      if (user && state.user && state.user.id === user.id) Object.assign(state.user, user)
-      else state.user = user
+      if (user && state.user && state.user.id === user.id) {
+        Object.assign(state.user, user)
+        if (state.user.ipa && !user.ipa) delete state.user.ipa
+        if (state.user.pd && !user.pd) delete state.user.pd
+      } else {
+        state.user = user
+      }
     }
   },
   actions: {
@@ -275,7 +280,7 @@ export const sessionStoreBuilder = () => ({
           }
         }, state.interval)
 
-        // a "stupid" keelalive loop that spams the server with keepalive requests, avoid it
+        // a "stupid" keepalive loop that spams the server with keepalive requests, avoid it
         if (state.autoKeepalive) {
           console.warn('autokeepalive option is not recommended, it creates unnecessary http traffic')
           dispatch('keepalive')
@@ -301,6 +306,15 @@ export const sessionStoreBuilder = () => ({
         })
       } else {
         console.error('No http client found to fetch active account details. You should pass Vue.http or Vue.axios as init param.')
+      }
+    },
+    cancelDeletion ({ state, dispatch }) {
+      if (this.httpLib) {
+        return this.httpLib.patch(`${state.directoryUrl}/api/users/${state.user.id}`, { plannedDeletion: null }).then(() => {
+          dispatch('readCookie')
+        })
+      } else {
+        console.error('No http client found to cancel deletion. You should pass Vue.http or Vue.axios as init param.')
       }
     }
   }

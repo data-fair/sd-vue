@@ -20,6 +20,7 @@
           v-on="on"
         >
           <avatar show-account />
+          <v-icon v-if="user.pd" color="warning" style="position:absolute;">mdi-alert</v-icon>
         </v-btn>
       </template>
 
@@ -42,6 +43,29 @@
             <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
+
+        <!-- cancel a planned deletion ? -->
+        <template v-if="user.pd">
+          <v-alert
+            :value="true"
+            type="warning"
+            tile
+            :outlined="$vuetify.theme.dark"
+            style="max-width:440px;"
+          >
+            {{ $t('plannedDeletion', {name: user.name, plannedDeletion: $d(new Date(user.pd))}) }}
+          </v-alert>
+
+          <v-row class="justify-center ma-0 mb-2">
+            <v-btn
+              color="warning"
+              text
+              @click="cancelDeletion"
+            >
+              {{ $t('cancelDeletion') }}
+            </v-btn>
+          </v-row>
+        </template>
 
         <!-- account switching (personal account and organizations) -->
         <template v-if="user.organizations.length > 1 || (user.organizations.length === 1 && (!user.ipa || activeAccount.type === 'user'))">
@@ -143,6 +167,8 @@ fr:
   adminMode: mode admin
   backToAdmin: Revenir à ma session administrateur
   darkMode: mode nuit
+  plannedDeletion: La suppression de l'utilisateur {name} et toutes ses informations est programmée le {plannedDeletion}.
+  cancelDeletion: Annuler la suppression de l'utilisateur
 en:
   login: Login / Sign up
   logout: Logout
@@ -151,6 +177,8 @@ en:
   adminMode: admin mode
   backToAdmin: Return to administrator session
   darkMode: night mode
+  plannedDeletion: The deletion of the user {name} and all its data is planned on the {plannedDeletion}.
+  cancelDeletion: Cancel the deletion of the user
 </i18n>
 
 <script>
@@ -168,7 +196,7 @@ export default {
     ...mapGetters('session', ['activeAccount'])
   },
   methods: {
-    ...mapActions('session', ['logout', 'login', 'switchOrganization', 'asAdmin']),
+    ...mapActions('session', ['logout', 'login', 'switchOrganization', 'asAdmin', 'cancelDeletion']),
     setDarkCookie (value) {
       const maxAge = 60 * 60 * 24 * 100 // 100 days
       this.$cookies.set('theme_dark', '' + value, { maxAge, path: '/' })
