@@ -107,6 +107,11 @@ export const sessionStoreBuilder = () => ({
     },
     isAccountAdmin(state, getters) {
       return getters.accountRole === 'admin'
+    },
+    cookieOpts(state) {
+      const cookieOpts = { path: '/', sameSite: state.sameSite }
+      if (state.sameSite) cookieOpts.sameSite = state.sameSite
+      return cookieOpts
     }
   },
   mutations: {
@@ -131,12 +136,17 @@ export const sessionStoreBuilder = () => ({
     login({ getters }, redirect) {
       goTo(getters.loginUrl(redirect))
     },
-    logout({ commit, state }) {
+    logout({ commit, state, getters }) {
       if (!this.httpLib) {
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
       }
       return this.httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
+        // sometimes server side cookie deletion is not applied immediately in browser local js context
+        // so we do it here to
+        this.cookies.set(`${state.cookieName}`, '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
+
         if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
         } else if (state.reloadAfterLogout && typeof window !== 'undefined') {
@@ -145,11 +155,9 @@ export const sessionStoreBuilder = () => ({
         commit('setAny', { user: null })
       })
     },
-    switchOrganization({ state, commit, dispatch }, organizationId) {
-      const cookieOpts = { path: '/', sameSite: state.sameSite }
-      if (state.sameSite) cookieOpts.sameSite = state.sameSite
-      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, cookieOpts)
-      else this.cookies.set(`${state.cookieName}_org`, '', cookieOpts)
+    switchOrganization({ state, getters, commit, dispatch }, organizationId) {
+      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, getters.cookieOpts)
+      else this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
       if (state.reloadAfterSwitchOrganization && typeof window !== 'undefined') window.location.reload()
       else dispatch('readCookie', { fromRes: true })
     },
