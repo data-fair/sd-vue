@@ -38,7 +38,7 @@
               {{ activeAccount.type === 'user' ? $t('personalAccount') : activeAccount.name }}
             </v-list-item-title>
             <v-list-item-subtitle v-if="activeAccount.department">
-              {{activeAccount.department}}
+              {{activeAccount.departmentName || activeAccount.department}}
             </v-list-item-subtitle>
             <v-list-item-subtitle>{{user.name}}</v-list-item-subtitle>
           </v-list-item-content>
