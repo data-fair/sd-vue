@@ -86,7 +86,7 @@
             v-for="organization in user.organizations.filter(o => activeAccount.type === 'user' || activeAccount.id !== o.id || (activeAccount.department || null) !== (o.department || null))"
             :id="'toolbar-menu-switch-orga-' + organization.id"
             :key="organization.id"
-            @click="switchOrganization(organization.id)"
+            @click="switchOrganization(organization.id + ':' + (organization.department || ''))"
           >
             <v-list-item-action class="my-0">
               <v-avatar :size="28">
