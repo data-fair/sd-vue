@@ -91,6 +91,9 @@ export const sessionStoreBuilder = () => ({
         if (state.user.organization.department) {
           account.department = state.user.organization.department
         }
+        if (state.user.organization.departmentName) {
+          account.departmentName = state.user.organization.departmentName
+        }
         return account
       } else {
         return {
@@ -146,6 +149,7 @@ export const sessionStoreBuilder = () => ({
         // so we do it here to
         this.cookies.set(`${state.cookieName}`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
 
         if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
@@ -156,8 +160,14 @@ export const sessionStoreBuilder = () => ({
       })
     },
     switchOrganization({ state, getters, commit, dispatch }, organizationId) {
-      if (organizationId) this.cookies.set(`${state.cookieName}_org`, organizationId, getters.cookieOpts)
-      else this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
+      if (organizationId) {
+        const [org, dep] = organizationId.split(':')
+        this.cookies.set(`${state.cookieName}_org`, org, getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_dep`, dep || '', getters.cookieOpts)
+      } else {
+        this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
+      }
       if (state.reloadAfterSwitchOrganization && typeof window !== 'undefined') window.location.reload()
       else dispatch('readCookie', { fromRes: true })
     },
@@ -234,8 +244,13 @@ export const sessionStoreBuilder = () => ({
         if (user) {
           let organizationId = this.cookies.get(`${state.cookieName}_org`, { fromRes: true })
           if (organizationId === undefined) organizationId = this.cookies.get(`${state.cookieName}_org`)
+          let departmentId = this.cookies.get(`${state.cookieName}_dep`, { fromRes: true })
+          if (departmentId === undefined) departmentId = this.cookies.get(`${state.cookieName}_dep`)
           if (organizationId) {
             user.organization = (user.organizations || []).find(o => o.id === organizationId)
+            if (departmentId) {
+              user.organization = (user.organizations || []).find(o => o.id === organizationId && o.department === departmentId)
+            }
 
             // consumerFlag is used by applications to decide if they should ask confirmation to the user
             // of the right quotas or other organization related context to apply

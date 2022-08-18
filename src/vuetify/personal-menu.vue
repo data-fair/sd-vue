@@ -83,7 +83,7 @@
             <v-list-item-title v-t="'personalAccount'" />
           </v-list-item>
           <v-list-item
-            v-for="organization in user.organizations.filter(o => activeAccount.type === 'user' || activeAccount.id !== o.id)"
+            v-for="organization in user.organizations.filter(o => activeAccount.type === 'user' || activeAccount.id !== o.id || (activeAccount.department || null) !== (o.department || null))"
             :id="'toolbar-menu-switch-orga-' + organization.id"
             :key="organization.id"
             @click="switchOrganization(organization.id)"
@@ -98,7 +98,7 @@
                 {{ organization.name }}
               </v-list-item-title>
               <v-list-item-subtitle v-if="organization.department">
-                {{organization.department}}
+                {{organization.departmentName || organization.department}}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
