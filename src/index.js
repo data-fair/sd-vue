@@ -153,6 +153,8 @@ export const sessionStoreBuilder = () => ({
 
         if (redirect) {
           return goTo(redirect)
+        } else if (redirect === false) {
+          // nothing
         } else if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
         } else if (state.reloadAfterLogout && typeof window !== 'undefined') {
