@@ -71,7 +71,7 @@ export const sessionStoreBuilder = () => ({
         // shorter than "logIfNecessaryOrRedirect"
         if (redirect && state.user && !noImmediate) return redirect
         if (!redirect || typeof redirect !== 'string') {
-          redirect = global.location ? `${global.location.origin}${global.location.pathname}` : ''
+          redirect = global.location ? `${global.location.href}` : ''
         }
         let url = `${state.directoryUrl}/login?redirect=${encodeURIComponent(redirect)}`
         Object.keys(extraParams).filter(key => ![null, undefined, ''].includes(extraParams[key])).forEach(key => {
