@@ -139,7 +139,7 @@ export const sessionStoreBuilder = () => ({
     login({ getters }, redirect) {
       goTo(getters.loginUrl(redirect))
     },
-    logout({ commit, state, getters }) {
+    logout({ commit, state, getters }, redirect) {
       if (!this.httpLib) {
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
@@ -151,7 +151,9 @@ export const sessionStoreBuilder = () => ({
         this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
 
-        if (state.logoutRedirectUrl) {
+        if (redirect) {
+          return goTo(redirect)
+        } else if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
         } else if (state.reloadAfterLogout && typeof window !== 'undefined') {
           window.location.reload()
