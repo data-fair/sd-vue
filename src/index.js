@@ -144,6 +144,8 @@ export const sessionStoreBuilder = () => ({
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
       }
+      // prevents breaking change when the logout action is called with a click event as parameter
+      if (typeof redirect === 'object') redirect = null
       return this.httpLib.delete(`${state.directoryUrl}/api/auth`).then(() => {
         // sometimes server side cookie deletion is not applied immediately in browser local js context
         // so we do it here to
