@@ -90,7 +90,8 @@
           >
             <v-list-item-action class="my-0">
               <v-avatar :size="28">
-                <img :src="`${directoryUrl}/api/avatars/organization/${organization.id}/avatar.png`">
+                <img v-if="organization.department" :src="`${directoryUrl}/api/avatars/organization/${organization.id}/${organization.department}/avatar.png`">
+                <img v-else :src="`${directoryUrl}/api/avatars/organization/${organization.id}/avatar.png`">
               </v-avatar>
             </v-list-item-action>
             <v-list-item-content>
