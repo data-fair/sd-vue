@@ -5,21 +5,21 @@
       class="primary-avatar"
       :size="36"
     >
-      <img :src="userAvatarUrl">
+      <img :src="userAvatarUrl" aria-hidden alt="">
     </v-avatar>
     <v-avatar
       v-else
       class="primary-avatar"
       :size="36"
     >
-      <img :src="accountAvatarUrl">
+      <img :src="accountAvatarUrl" aria-hidden alt="">
     </v-avatar>
     <v-avatar
       class="secondary-avatar"
       :size="28"
       v-if="showAccount && activeAccount.type !== 'user'"
     >
-      <img :src="userAvatarUrl">
+      <img :src="userAvatarUrl" aria-hidden alt="">
     </v-avatar>
   </div>
 </template>

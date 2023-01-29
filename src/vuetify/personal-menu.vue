@@ -18,6 +18,7 @@
           text
           class="px-0"
           v-on="on"
+          :title="$t('openPersonalMenu')"
         >
           <avatar show-account />
           <v-icon v-if="user.pd" color="warning" style="position:absolute;">mdi-alert</v-icon>
@@ -163,6 +164,7 @@
 fr:
   login: Se connecter / S'inscrire
   logout: Se déconnecter
+  openPersonalMenu: Ouvrez le menu personnel
   personalAccount: Compte personnel
   switchAccount: Changer de compte
   adminMode: mode admin
@@ -173,6 +175,7 @@ fr:
 en:
   login: Login / Sign up
   logout: Logout
+  openPersonalMenu: Open personal menu
   personalAccount: Personal account
   switchAccount: Switch account
   adminMode: admin mode
