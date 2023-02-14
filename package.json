@@ -7,7 +7,7 @@
     "lint": "eslint --ext js,vue --ignore-path .gitignore .",
     "build": "webpack --mode production",
     "build-dev": "webpack --mode development && cp dist/index.js demo/node_modules/@data-fair/sd-vue/dist/index.js",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
