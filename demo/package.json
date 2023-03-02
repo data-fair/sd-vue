@@ -36,6 +36,6 @@
     "http-proxy-middleware": "^2.0.6",
     "iframe-resizer": "^4.3.2",
     "nuxt": "^2.15.8",
-    "vuetify": "^2.6.5"
+    "vuetify": "^2.6.10"
   }
 }
