@@ -15,7 +15,7 @@
   "author": "Alban Mouton <alban.mouton@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@data-fair/sd-express": "^1.2.0",
+    "@data-fair/sd-express": "^1.4.0",
     "@data-fair/sd-vue": "^1.4.0",
     "@koumoul/v-iframe": "^0.10.0",
     "@nuxtjs/axios": "^5.3.6",
