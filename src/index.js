@@ -178,15 +178,16 @@ export const sessionStoreBuilder = () => ({
       else dispatch('readCookie', { fromRes: true })
     },
     setAdminMode({ state, dispatch, getters }, params) {
-      let adminMode, redirect
+      let adminMode, redirect, extraParams
       if (typeof params === 'boolean') {
         adminMode = params
       } else {
         adminMode = params.value
         redirect = params.redirect
+        extraParams = params.extraParams
       }
       if (adminMode) {
-        let url = getters.loginUrl(redirect, true)
+        let url = getters.loginUrl(redirect, true, extraParams)
         if (state.user) url += `&email=${encodeURIComponent(state.user.email)}`
         goTo(url + `&adminMode=true`)
       } else {
