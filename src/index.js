@@ -49,6 +49,15 @@ function goTo (url) {
   }
 }
 
+function compareAccount (account1, account2) {
+  if (!account1 && !account2) return true
+  if (!account1 || !account2) return false
+  if (account1.type !== account2.type) return false
+  if (account1.id !== account2.id) return false
+  if ((account1.department || null) !== (account2.department || null)) return false
+  return true
+}
+
 export const sessionStoreBuilder = () => ({
   namespaced: true,
   state: {
@@ -61,8 +70,7 @@ export const sessionStoreBuilder = () => ({
     autoKeepalive: 0,
     sameSite: null,
     activeAccountDetails: null,
-    reloadAfterSwitchOrganization: true,
-    reloadAfterLogout: true
+    reloadAfterAccountChange: true
   },
   getters: {
     loginUrl(state) {
@@ -139,7 +147,7 @@ export const sessionStoreBuilder = () => ({
     login({ getters }, redirect) {
       goTo(getters.loginUrl(redirect))
     },
-    logout({ commit, state, getters }, redirect) {
+    logout({ commit, state, getters, dispatch }, redirect) {
       if (!this.httpLib) {
         console.error('No http client found to send logout action. You should pass Vue.http or Vue.axios as init param.')
         return
@@ -159,10 +167,8 @@ export const sessionStoreBuilder = () => ({
           // nothing
         } else if (state.logoutRedirectUrl) {
           return goTo(state.logoutRedirectUrl)
-        } else if (state.reloadAfterLogout && typeof window !== 'undefined') {
-          window.location.reload()
         }
-        commit('setAny', { user: null })
+        dispatch('readCookie')
       })
     },
     switchOrganization({ state, getters, commit, dispatch }, organizationId) {
@@ -174,8 +180,7 @@ export const sessionStoreBuilder = () => ({
         this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
       }
-      if (state.reloadAfterSwitchOrganization && typeof window !== 'undefined') window.location.reload()
-      else dispatch('readCookie', { fromRes: true })
+      dispatch('readCookie')
     },
     setAdminMode({ state, dispatch, getters }, params) {
       let adminMode, redirect, extraParams
@@ -244,6 +249,7 @@ export const sessionStoreBuilder = () => ({
       dispatch('readCookie')
     },
     readCookie({ state, commit, getters }) {
+      const previousActiveAccount = getters.activeAccount
       let cookie = this.cookies.get(state.cookieName, { fromRes: true })
       if (cookie === undefined) cookie = this.cookies.get(state.cookieName)
       if (cookie) {
@@ -279,6 +285,13 @@ export const sessionStoreBuilder = () => ({
       }
       if (state.activeAccountDetails && (!getters.activeAccount || getters.activeAccount.type !== state.activeAccountDetails.type || getters.activeAccount.id !== state.activeAccountDetails.id)) {
         commit('setAny', { activeAccountDetails: null })
+      }
+      if (
+        state.initialized &&
+        state.reloadAfterAccountChange &&
+        !compareAccount(previousActiveAccount, getters.activeAccount)
+      ) {
+        if (typeof window !== 'undefined') window.location.reload()
       }
       commit('setAny', { initialized: true })
     },
