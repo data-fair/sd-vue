@@ -29,8 +29,10 @@ function jwtDecodeAlive (jwt) {
   if (!decoded) return null
   const now = Math.ceil(Date.now().valueOf() / 1000)
   if (typeof decoded.exp !== 'undefined' && decoded.exp < now) {
-    console.error(`token expired: ${decoded.exp}<${now},  ${JSON.stringify(decoded)}`)
-    return null
+    // this check is disabled for compatibility with newer SD where session might need to be kept alive
+    // using id_token_ex event if id_token is expired
+    // console.error(`token expired: ${decoded.exp}<${now},  ${JSON.stringify(decoded)}`)
+    // return null
   }
   if (typeof decoded.nbf !== 'undefined' && decoded.nbf > now) {
     console.warn(`token not yet valid: ${decoded.nbf}>${now}, ${JSON.stringify(decoded)}`)
