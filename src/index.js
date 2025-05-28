@@ -162,6 +162,7 @@ export const sessionStoreBuilder = () => ({
         this.cookies.set(`${state.cookieName}`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_role`, '', getters.cookieOpts)
 
         if (redirect) {
           return goTo(redirect)
@@ -175,12 +176,14 @@ export const sessionStoreBuilder = () => ({
     },
     switchOrganization({ state, getters, commit, dispatch }, organizationId) {
       if (organizationId) {
-        const [org, dep] = organizationId.split(':')
+        const [org, dep, role] = organizationId.split(':')
         this.cookies.set(`${state.cookieName}_org`, org, getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_dep`, dep || '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_role`, role || '', getters.cookieOpts)
       } else {
         this.cookies.set(`${state.cookieName}_org`, '', getters.cookieOpts)
         this.cookies.set(`${state.cookieName}_dep`, '', getters.cookieOpts)
+        this.cookies.set(`${state.cookieName}_role`, '', getters.cookieOpts)
       }
       dispatch('readCookie')
     },
@@ -261,11 +264,15 @@ export const sessionStoreBuilder = () => ({
           if (organizationId === undefined) organizationId = this.cookies.get(`${state.cookieName}_org`)
           let departmentId = this.cookies.get(`${state.cookieName}_dep`, { fromRes: true })
           if (departmentId === undefined) departmentId = this.cookies.get(`${state.cookieName}_dep`)
+          let role = this.cookies.get(`${state.cookieName}_role`, { fromRes: true })
+          if (role === undefined) role = this.cookies.get(`${state.cookieName}_role`)
           if (organizationId) {
-            user.organization = (user.organizations || []).find(o => o.id === organizationId)
-            if (departmentId) {
-              user.organization = (user.organizations || []).find(o => o.id === organizationId && o.department === departmentId)
-            }
+            user.organization = (user.organizations || []).find(o => {
+              if (o.id !== organizationId) return false
+              if (departmentId && o.department !== departmentId) return false
+              if (role && o.role !== role) return false
+              return true
+            })
 
             // consumerFlag is used by applications to decide if they should ask confirmation to the user
             // of the right quotas or other organization related context to apply

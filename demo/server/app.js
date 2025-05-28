@@ -15,7 +15,7 @@ app.get('/api/protected', session.auth, (req, res) => {
   res.send('Success!!')
 })
 
-exports.run = async() => {
+ export const run = async() => {
   // Serve UI resources
   app.use(await require('./nuxt')())
   server.listen(5676)
@@ -23,7 +23,7 @@ exports.run = async() => {
   return app
 }
 
-exports.stop = async() => {
+ export const stop = async() => {
   server.close()
   await eventToPromise(server, 'close')
 }
